@@ -1,0 +1,23 @@
+{
+	"name": "piecewise",
+	"version": "0.1.0",
+	"description": "Templates that are appropriate sometimes.",
+	"keywords": ["template", "html"],
+	"main": "piecewise.js",
+	"files": ["piecewise.js"],
+	"homepage": "https://github.com/rninty/piecewise",
+	"bugs": {
+		"url": "https://github.com/rninty/piecewise/issues",
+		"email": "rninty@gmail.com"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Ryan O’Hara",
+		"email": "rninty@gmail.com",
+		"url": "http://rninty.me/"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/rninty/piecewise"
+	}
+}
