@@ -67,7 +67,7 @@ function filter(expression, filters) {
 	for (var i = filters.length; i--;)
 		code += filters[i] + "(";
 
-	return code + expression + Array(filters.length + 1).join(")");
+	return code + expression + new Array(filters.length + 1).join(")");
 }
 
 var LETTER_I = 105;
@@ -111,10 +111,6 @@ VariableManager.prototype.getIndexName = function() {
 	return name;
 };
 
-function trim(s) {
-	return s.trim();
-}
-
 function parseFilters(filterList) {
 	filterList = filterList.trim();
 
@@ -125,7 +121,7 @@ function parseFilters(filterList) {
 		return [];
 
 	return filterList.match(/[\w-]+/g).map(function(f) {
-		return escapePath("filters", f.trim());
+		return escapePath("filters", f);
 	});
 }
 
@@ -257,12 +253,11 @@ function compile(load, dataVariable, name, variables) {
 
 function Template(code) {
 	this.func = new Function("filters, data", "var output = '" + code + "';\nreturn output;");
-	console.log(this.func.toString());
 }
 
 Template.prototype.render = function(data) {
 	return this.func(filters, data);
-}
+};
 
 function DirectoryLoader(root, options) {
 	this.root = root;
