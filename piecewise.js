@@ -190,10 +190,32 @@ function lex(template) {
 	return tokens;
 }
 
-function compile(load, dataVariable, name, variables) {
+function compile(load, dataVariable, name, variables, chain, functions) {
+	var compile_ = function(dataVariable, name) {
+		if (functions.hasOwnProperty(name))
+			return "' + " + functions[name] + "(" + dataVariable + ") + '";
+
+		return compile(load, dataVariable, name, variables, chain, functions);
+	};
+
 	var template = load(name);
 	var tokens = lex(template);
 	var code = "";
+
+	if (!functions.hasOwnProperty(name) && chain.indexOf(name) !== -1) {
+		var functionName = variables.getName(name);
+		functions[name] = functionName;
+
+		var funcVariables = new VariableManager();
+		funcVariables.used[functionName] = true;
+
+		code = "' + (function " + functionName + "(data) { var output = '" + compile(load, "data", name, funcVariables, chain, functions) + "'; return output; })(" + dataVariable + ") + '";
+
+		delete functions[name];
+		return code;
+	}
+
+	chain.push(name);
 
 	for (var i = 0, l = tokens.length; i < l; i++) {
 		var token = tokens[i];
@@ -212,7 +234,7 @@ function compile(load, dataVariable, name, variables) {
 				break;
 
 			case "include":
-				code += compile(load, dataVariable, token.name, variables);
+				code += compile_(dataVariable, token.name);
 				break;
 
 			case "if":
@@ -220,14 +242,14 @@ function compile(load, dataVariable, name, variables) {
 
 				code +=
 					"';\nif (" + conditionPath + ") {\n" +
-					"output += '" + compile(load, conditionPath, token.template, variables) +
+					"output += '" + compile_(dataVariable, token.template) +
 					"';\n}\noutput += '";
 				break;
 
 			case "ifnot":
 				code +=
 					"';\nif (!" + escapePath(dataVariable, token.variable) + ") {\n" +
-					"output += '" + compile(load, null, token.template, variables) +
+					"output += '" + compile_(dataVariable, token.template) +
 					"';\n}\noutput += '";
 				break;
 
@@ -239,7 +261,7 @@ function compile(load, dataVariable, name, variables) {
 				code +=
 					"';\nfor (var " + indexName + " = 0; " + indexName + " < " + collectionPath + ".length; " + indexName + "++) {\n" +
 					"var " + variableName + " = " + collectionPath + "[" + indexName + "];\n" +
-					"output += '" + compile(load, variableName, token.template, variables) +
+					"output += '" + compile_(variableName, token.template) +
 					"';\n}\noutput += '";
 				break;
 
@@ -280,7 +302,7 @@ DirectoryLoader.prototype.load = function(name, override) {
 			return override[name];
 
 		return loader.read(name);
-	}, "data", name, new VariableManager()));
+	}, "data", name, new VariableManager(), [], {}));
 };
 
 module.exports.filters = filters;

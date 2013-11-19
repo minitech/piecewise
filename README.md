@@ -96,11 +96,11 @@ This renders… in a way that I hope you can infer from context.
 
 Here are the `{{`/`}}`-delimited “expressions” available:
 
- - `{{ @value.path | filter1 | filter2 | … }}` – runs *`value.path`* through any number of filters. If no filters are provided, generic HTML-escaping is used; to disable this, add a trailing `|`, e.g. `{{ @body | }}` as seen above.
- - `{{ template }}` – includes a template named *`template`*.
- - `{{ template @value.path }}` – includes a template if *`value.path`* in the context is truthy according to JavaScript. The context for the new template is the value of *`value.path`*.
- - `{{ template ! @value.path }}` – the same as above, but negated, and the new template has no context.
- - `{{ template < @value.path }}` – includes *`template`* for each item in the array or array-like object at *`value.path`* in the context. The context for each included template is the current item.
+ - `{{ @value.path | filter1 | filter2 | … }}` – runs `value.path` through any number of filters. If no filters are provided, generic HTML-escaping is used; to disable this, add a trailing `|`, e.g. `{{ @body | }}` as seen above.
+ - `{{ template }}` – includes a template named `template`.
+ - `{{ template @value.path }}` – includes a template if `value.path` in the context is truthy according to JavaScript. The new template inherits the paren’t context.
+ - `{{ template ! @value.path }}` – the same as above, but negated.
+ - `{{ template < @value.path }}` – includes `template` for each item in the array or array-like object at `value.path` in the context. The context for each included template is the current item.
  - `{{ {{ }}` – the literal text `{{`.
 
 And here are the built-in filters, which can be removed, extended, or modified through the exported `filters` object:
@@ -113,8 +113,3 @@ And here are the built-in filters, which can be removed, extended, or modified t
 Please keep everything nice and functional and use double-quotes in your HTML, or things are liable to break in unexpected ways and behave differently across any versions.
 
 You don’t have to put everything in a different file; consider writing a loader for XML, for example! It’s fun. Don’t be afraid to look at `piecewise.js`; it’s only about 300 lines.
-
-### The todo list
-
- - Allow templates that include themselves by splitting them out into functions when required.
- - Throw errors when a template tries to use a context when it doesn’t have one.
