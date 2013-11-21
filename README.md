@@ -98,7 +98,7 @@ Here are the `{{`/`}}`-delimited “expressions” available:
 
  - `{{ @value.path | filter1 | filter2 | … }}` – runs `value.path` through any number of filters. If no filters are provided, generic HTML-escaping is used; to disable this, add a trailing `|`, e.g. `{{ @body | }}` as seen above.
  - `{{ template }}` – includes a template named `template`.
- - `{{ template @value.path }}` – includes a template if `value.path` in the context is truthy according to JavaScript. The new template inherits the paren’t context.
+ - `{{ template @value.path }}` – includes a template if `value.path` in the context is truthy according to JavaScript. The new template inherits the parent context.
  - `{{ template ! @value.path }}` – the same as above, but negated.
  - `{{ template < @value.path }}` – includes `template` for each item in the array or array-like object at `value.path` in the context. The context for each included template is the current item.
  - `{{ {{ }}` – the literal text `{{`.
